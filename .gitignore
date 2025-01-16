@@ -2,5 +2,6 @@
 **/node_modules
 **/.env
 **/*.json
+**/images
 .env
 *.json
