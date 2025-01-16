@@ -4,5 +4,3 @@
 **/*.json
 **/images
 **/yarn.lock
-.env
-*.json
