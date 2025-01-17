@@ -31,10 +31,18 @@ umi.use(signerIdentity(signer));
         const metadata = {
             name: "haiirucode",
             description: "We'll be greater in the future",
-            images: imageLInk ,
+            image:imageLInk,
             attributes: [
                 {trait_type: 'Tier', value: 'Legendary'}
             ],
+            properties: {
+                files: [
+                    {
+                        uri: imageLInk,
+                        type: 'image/png'
+                    }
+                ]
+            }
         };
         let myUri = await umi.uploader.uploadJson(metadata);
         if(myUri){
