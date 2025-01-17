@@ -33,7 +33,8 @@ umi.use(signerIdentity(signer));
         const [myUri] = await umi.uploader.upload([image]);
         if(myUri){
             const joinPath = path.join(dirPath, `${imageName}.txt`)
-            writeFileSync(joinPath, myUri);
+            const newURL = new URL(myUri).pathname.slice(1);
+            writeFileSync(joinPath, `https://devnet.irys.xyz/${newURL}`);
         }
         console.log("Your image URI: ", myUri);
     }
