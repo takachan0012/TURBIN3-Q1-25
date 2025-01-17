@@ -3,6 +3,8 @@ import { createUmi } from "@metaplex-foundation/umi-bundle-defaults"
 import { createGenericFile, createSignerFromKeypair, signerIdentity } from "@metaplex-foundation/umi"
 import { irysUploader } from "@metaplex-foundation/umi-uploader-irys"
 import { readFile } from "fs/promises"
+import path from "path"
+import { existsSync, mkdirSync, writeFileSync } from "fs"
 
 // Create a devnet connection
 const umi = createUmi('https://api.devnet.solana.com');
@@ -16,14 +18,24 @@ umi.use(signerIdentity(signer));
 (async () => {
     try {
         //1. Load image
-        const imageBuffer = await readFile()
+        const imageName = 'generug';
+        const dirPath = path.resolve(__dirname,'../nft-link');
+        if(!existsSync(dirPath)){
+            mkdirSync(dirPath, {recursive:true});
+        }
+        const filePath = path.resolve(__dirname, `../images/${imageName}.png`);
+        const imageBuffer = await readFile(filePath)
         //2. Convert image to generic file.
+        const image = createGenericFile(imageBuffer,imageName,{
+            contentType: 'image/png'
+        })
         //3. Upload image
-
-        // const image = ???
-
-        // const [myUri] = ??? 
-        // console.log("Your image URI: ", myUri);
+        const [myUri] = await umi.uploader.upload([image]);
+        if(myUri){
+            const joinPath = path.join(dirPath, `${imageName}.txt`)
+            writeFileSync(joinPath, myUri);
+        }
+        console.log("Your image URI: ", myUri);
     }
     catch(error) {
         console.log("Oops.. Something went wrong", error);
