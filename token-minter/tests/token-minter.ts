@@ -14,7 +14,7 @@ describe("Token Minter Program", () => {
   let mintBump: number;
   let tokenAccount: PublicKey;
   const payer = provider.wallet as anchor.Wallet;
-  const tokenName = "TokenF";
+  const tokenName = "TokenG";
   
   [mint,mintBump] = PublicKey.findProgramAddressSync(
       [Buffer.from('mint'), payer.publicKey.toBuffer(), Buffer.from(tokenName)],
@@ -64,7 +64,7 @@ describe("Token Minter Program", () => {
     console.log("Mint Token Hash:", tx);
     });
 
-  it("Token Transfer", async() => {
+  it("Transfer Tokens", async() => {
       const payerTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         payer.payer,
@@ -82,7 +82,7 @@ describe("Token Minter Program", () => {
 
       const amount = new anchor.BN(0.5*LAMPORTS_PER_SOL); // 500 tokens
       const txHash = await program.methods
-      .tokenTransfer(amount)
+      .transferTokens(amount)
       .accounts({
         from: payerTokenAccount.address,
         to: receiverTokenAccount.address,
@@ -91,6 +91,6 @@ describe("Token Minter Program", () => {
       })
       .rpc();
 
-      console.log("Token Transfer Hash: ", txHash);
+      console.log("Transfer Tokens Hash: ", txHash);
   });
 });

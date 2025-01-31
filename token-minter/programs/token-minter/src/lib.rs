@@ -24,7 +24,7 @@ pub mod token_minter {
         Ok(())
     }
 
-    pub fn token_transfer(ctx:Context<TokenTransfer>, amount: u64) -> Result<()> {
+    pub fn transfer_tokens(ctx:Context<TransferTokens>, amount: u64) -> Result<()> {
         let cpi_accounts = Transfer {
             from: ctx.accounts.from.to_account_info(),
             to: ctx.accounts.to.to_account_info(),
@@ -59,7 +59,7 @@ pub struct MintTokens<'info> {
 }
 
 #[derive(Accounts)]
-pub struct TokenTransfer<'info>{
+pub struct TransferTokens<'info>{
     #[account(mut)]
     pub from: Account<'info, TokenAccount>,
     #[account(mut)]
