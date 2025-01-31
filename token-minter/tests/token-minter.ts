@@ -1,6 +1,6 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
-import {  TOKEN_PROGRAM_ID, getAssociatedTokenAddress, getAccount, createAssociatedTokenAccount} from "@solana/spl-token";
+import {  TOKEN_PROGRAM_ID, getAssociatedTokenAddress, getAccount, createAssociatedTokenAccount, getOrCreateAssociatedTokenAccount} from "@solana/spl-token";
 import { PublicKey, SystemProgram, LAMPORTS_PER_SOL} from "@solana/web3.js";
 import { TokenMinter } from "../target/types/token_minter";
 
@@ -14,7 +14,7 @@ describe("Token Minter Program", () => {
   let mintBump: number;
   let tokenAccount: PublicKey;
   const payer = provider.wallet as anchor.Wallet;
-  const tokenName = "TokenD";
+  const tokenName = "TokenF";
   
   [mint,mintBump] = PublicKey.findProgramAddressSync(
       [Buffer.from('mint'), payer.publicKey.toBuffer(), Buffer.from(tokenName)],
@@ -63,4 +63,34 @@ describe("Token Minter Program", () => {
 
     console.log("Mint Token Hash:", tx);
     });
+
+  it("Token Transfer", async() => {
+      const payerTokenAccount = await getOrCreateAssociatedTokenAccount(
+        provider.connection,
+        payer.payer,
+        mint,
+        payer.publicKey
+      );
+      const receiver = new anchor.web3.Keypair();
+      console.log("Receiver Pubkey: ", receiver.publicKey);
+      const receiverTokenAccount = await getOrCreateAssociatedTokenAccount(
+        provider.connection,
+        payer.payer,
+        mint,
+        receiver.publicKey
+      );
+
+      const amount = new anchor.BN(0.5*LAMPORTS_PER_SOL); // 500 tokens
+      const txHash = await program.methods
+      .tokenTransfer(amount)
+      .accounts({
+        from: payerTokenAccount.address,
+        to: receiverTokenAccount.address,
+        authority: payer.publicKey,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      })
+      .rpc();
+
+      console.log("Token Transfer Hash: ", txHash);
+  });
 });
