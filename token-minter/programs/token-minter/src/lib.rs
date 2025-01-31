@@ -45,3 +45,13 @@ pub struct MintTokens<'info> {
     pub authority: Signer<'info>,
     pub token_program: Program<'info, Token>,
 }
+
+#[derive(Accounts)]
+pub struct TokenTransfer<'info>{
+    #[account(mut)]
+    pub from: Account<'info, TokenAccount>,
+    #[account(mut)]
+    pub to: Account<'info, TokenAccount>,
+    pub authority: Signer<'info>,
+    pub token_program: Program<'info, Token>,
+}
